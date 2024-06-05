@@ -1,26 +1,15 @@
 <?php
+require_once __DIR__ . '/func.php';
 
-function redirectToHome(): void
-{
-    header('Location: /');
+if (empty($_POST['email'])) {
+    header("HTTP/1.1 404 Not Found");
     exit();
 }
 
-if (false === isset($_POST['email'], $_POST['category'], $_POST['title'], $_POST['description']))
-{
-    header('Location: /');
-    exit();
-}
+$inputData = array();
+$inputData[] = $_POST['email'];
+$inputData[] = !empty($_POST['title']) ? $_POST['title'] : "untitled";
+$inputData[] = $_POST['description'];
+$inputData[] = !empty($_POST['category']) ? $_POST['category'] : "other";
 
-$category = $_POST['category'];
-$title = $_POST['title'];
-$desc = $_POST['description'];
-
-$filePath = "categories/{$category}/{$title}.txt";
-
-if (false === file_put_contents($filePath, $desc))
-{
-    throw new Exception('Something went wrong!');
-}
-chmod($filePath, 0777);
-redirectToHome();
+$db = extracted();
